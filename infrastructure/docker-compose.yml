@@ -1,0 +1,45 @@
+version: "3.7"
+
+volumes:
+  redis_data:
+
+networks:
+  test:
+    driver: bridge
+
+services:
+  #######################################
+  # Mongo
+  #######################################
+  mongodb:
+    image: mongodb
+    container_name: mongodb
+    build:
+      context: mongodb/
+    # command: [--auth]
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/mongodb/data:/data/db
+      - ~/mongodb/log:/data/log
+      - ~/mongodb/backup:/data/backup
+    restart: unless-stopped
+    networks:
+      - test
+
+  #######################################
+  # Redis
+  #######################################
+  redis:
+    image: redis
+    container_name: redis
+    build:
+      context: redis/
+    # command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - test
